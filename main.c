@@ -25,37 +25,82 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define DEBUG
+
 #define STATE_END 0
 #define STATE_INIT -1
 #define STATE_COMMAND_GROUP -2
 #define STATE_COMMAND_NUMBER -3
+#define STATE_G00_RAPID 1
+#define STATE_G01_LINEAR 2
+
+#define GCODE_GROUP_G 1
+#define GCODE_GROUP_M 2
 
 /*
  * 
  */
 int main(int argc, char** argv) {
 
+#ifdef DEBUG
     printf("G-CODE файл: %s\n", argv[1]);
-
+#endif
     char *gcode_symbol = argv[1];
     int state = STATE_INIT;
+    int gcode_group = 0;
     while (state != STATE_END) {
         switch (state) {
             case STATE_INIT:
-                printf("INIT\n");
+#ifdef DEBUG
+                printf("STATE_INIT\n");
+#endif
                 state = STATE_COMMAND_GROUP;
-                break;
             case STATE_COMMAND_GROUP:
-                printf("GROUP\n");
+#ifdef DEBUG          
+                printf("STATE_COMMAND_GROUP\n");
+#endif
+                if (*gcode_symbol == 'G') {
+                    gcode_group = GCODE_GROUP_G;
+                } else if (*gcode_symbol == 'M') {
+                    gcode_group = GCODE_GROUP_M;
+                }
+#ifdef DEBUG
+                printf("gcode_group=%d\n", gcode_group);
+#endif
                 gcode_symbol++;
                 if (*gcode_symbol == 0) {
                     state = STATE_END;
+                } else {
+                    state = STATE_COMMAND_NUMBER;
                 }
                 break;
             case STATE_COMMAND_NUMBER:
-                printf("NUMBER\n");
+#ifdef DEBUG
+                printf("STATE_COMMAND_NUMBER\n");
+#endif
+                char * digits[10];
+                char * digit = *digits;
+                while (1) {
+                    *digit = *gcode_symbol;
+                    digit++;
+                    gcode_symbol++;
+                    if (*gcode_symbol == 32) {
+                        *digit = 0;
+                        state = STATE_END;
+                        break;
+                    }
+                    if (*gcode_symbol != 0) {
+                        *digit = 0;
+                        state = STATE_END;
+                        break;
+                    }
+                }
+#ifdef DEBUG
+                printf("%d", atoi(digits));
+#endif
                 break;
         }
+
     }
 
     /*    while (*gcode_symbol != 0) {

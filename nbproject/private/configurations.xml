@@ -13,6 +13,8 @@
         <gdb_interceptlist>
           <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
         </gdb_interceptlist>
+        <gdb_signals>
+        </gdb_signals>
         <gdb_options>
           <DebugOptions>
           </DebugOptions>
@@ -27,8 +29,9 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" "G0 X10. Y10 Z01 S1000\nG1 G2\nM0"</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" "G0 X10. Y10 Z01 S1000"</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" "G01 X10. Y10 Z01 S1000"</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" "G0 X10. Y10 Z01 S1000"</runcommand>
+        <runcommand>"${OUTPUT_PATH}" "G01 X10. Y10 Z01 S1000"</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>
