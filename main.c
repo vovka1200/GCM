@@ -42,31 +42,23 @@
  */
 int main(int argc, char** argv) {
 
-#ifdef DEBUG
     printf("G-CODE файл: %s\n", argv[1]);
-#endif
     char *gcode_symbol = argv[1];
     int state = STATE_INIT;
     int gcode_group = 0;
     while (state != STATE_END) {
         switch (state) {
             case STATE_INIT:
-#ifdef DEBUG
                 printf("STATE_INIT\n");
-#endif
                 state = STATE_COMMAND_GROUP;
             case STATE_COMMAND_GROUP:
-#ifdef DEBUG          
                 printf("STATE_COMMAND_GROUP\n");
-#endif
                 if (*gcode_symbol == 'G') {
                     gcode_group = GCODE_GROUP_G;
                 } else if (*gcode_symbol == 'M') {
                     gcode_group = GCODE_GROUP_M;
                 }
-#ifdef DEBUG
                 printf("gcode_group=%d\n", gcode_group);
-#endif
                 gcode_symbol++;
                 if (*gcode_symbol == 0) {
                     state = STATE_END;
@@ -75,9 +67,7 @@ int main(int argc, char** argv) {
                 }
                 break;
             case STATE_COMMAND_NUMBER:
-#ifdef DEBUG
                 printf("STATE_COMMAND_NUMBER\n");
-#endif
                 char * digits[10];
                 char * digit = *digits;
                 while (1) {
@@ -95,9 +85,7 @@ int main(int argc, char** argv) {
                         break;
                     }
                 }
-#ifdef DEBUG
                 printf("%d", atoi(digits));
-#endif
                 break;
         }
 
