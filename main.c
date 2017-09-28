@@ -23,7 +23,7 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h> 
 
 #define DEBUG
  
@@ -36,21 +36,7 @@
 #else
 #define debugf(...)
 #endif
-
-#define STATE_END 0
-#define STATE_FRAME 1
-#define STATE_COMMAND_GROUP 2 
-#define STATE_COMMAND_GROUP_G 3 
-#define STATE_G00_RAPID 10
-#define STATE_G00_RAPID_X 11
-#define STATE_G00_RAPID_Y 12
-#define STATE_G00_RAPID_Z 13
-#define STATE_G01_LINEAR 20
-#define STATE_G01_LINEAR_X 21
-#define STATE_G01_LINEAR_Y 22
-#define STATE_G01_LINEAR_Z 23
-#define STATE_G01_LINEAR_FEED 24
-
+ 
 int state = STATE_FRAME;
 char *gcode_symbol;
 char *digits;

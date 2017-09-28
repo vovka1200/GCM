@@ -9,6 +9,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Файлы заголовков"
                    projectFiles="true">
+      <itemPath>states.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Файлы ресурсов"
@@ -37,9 +38,14 @@
       <compileType>
         <cTool>
           <standard>10</standard>
+          <incFile>
+            <pElem>states.h</pElem>
+          </incFile>
         </cTool>
       </compileType>
       <item path="main.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="states.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -64,6 +70,8 @@
         </asmTool>
       </compileType>
       <item path="main.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="states.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>
