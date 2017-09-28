@@ -26,12 +26,38 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" "G0 X10. Y10 Z01 S1000\nG1 G2\nM0"</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" "G0 X10. Y10 Z01 S1000"</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" "G01 X10. Y10 Z01 S1000"</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" "G00 X10. Y10 Z01 S1000"</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" "G00 X10.2 Y10.34 Z01.99 S1000"</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" "G00 X10.2 Y10.34 Z01.99
+G01 X100.2 Y300.2 Z1 
+"
+</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" "%
+G00 X10.2 Y10.34 Z01.99
+G01 X100.2 Y300.2 Z1 
+"</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" "%
+G00 X10.2 Y10.34 Z01.99
+G01 X100.2 Y300.2 Z1 S1000
+"</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" "%
+G00 X10.2 Y10.34 Z01.99
+G01 X100.2 Y300.2 Z1 F1000
+"</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" "%
+G01 X10.2 Y10.34 Z01.99
+G00 X112 Y432 Z111
+G01 X100.2 Y300.2 Z1 F1000
+"</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" "G01 X10. Y10 Z01 S1000"</runcommand>
+        <runcommand>"${OUTPUT_PATH}" "%
+G01 X10.2 Y10.34 Z01.99
+G00 X112 Y432 Z111
+G01 X100.2 Y300.2 Z1 F1000
+"</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>
