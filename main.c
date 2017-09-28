@@ -25,6 +25,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define DEBUG
+ 
+#ifdef DEBUG
+#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__)
+#define debugf(s,d) {Serial.print(s); Serial.println(d,DEC);}
+#else
+#define debugf(...) printf(__VA_ARGS__);
+#endif
+#else
+#define debugf(...)
+#endif
+
 #define STATE_END 0
 #define STATE_FRAME 1
 #define STATE_COMMAND_GROUP 2 
@@ -38,9 +50,6 @@
 #define STATE_G01_LINEAR_Y 22
 #define STATE_G01_LINEAR_Z 23
 #define STATE_G01_LINEAR_FEED 24
-
-#define GCODE_GROUP_G 1
-#define GCODE_GROUP_M 2
 
 int state = STATE_FRAME;
 char *gcode_symbol;
@@ -71,7 +80,7 @@ int readDigits() {
  */
 int main(int argc, char** argv) {
 
-    printf("G-CODE файл: %s\n", argv[1]);
+    debugf("G-CODE файл: %s\n", argv[1]);
     gcode_symbol = argv[1];
     digits = malloc(10);
     digit = digits;
@@ -80,7 +89,7 @@ int main(int argc, char** argv) {
             case STATE_FRAME:
                 switch (*gcode_symbol) {
                     case '%':
-                        printf("STATE_FIRST_FRAME\n");
+                        debugf("STATE_FIRST_FRAME\n");
                         break;
                     case '\n':
                         state = STATE_COMMAND_GROUP;
@@ -125,21 +134,21 @@ int main(int argc, char** argv) {
             case STATE_G00_RAPID_X:
                 if (readDigits() == 1) {
                     x = atof(digits);
-                    printf("STATE_G00_LINEAR_X: %f\n", x);
+                    debugf("STATE_G00_LINEAR_X: %f\n", x);
                     state = STATE_G00_RAPID;
                 }
                 break;
             case STATE_G00_RAPID_Y:
                 if (readDigits() == 1) {
                     y = atof(digits);
-                    printf("STATE_G00_LINEAR_Y: %f\n", y);
+                    debugf("STATE_G00_LINEAR_Y: %f\n", y);
                     state = STATE_G00_RAPID;
                 }
                 break;
             case STATE_G00_RAPID_Z:
                 if (readDigits() == 1) {
                     z = atof(digits);
-                    printf("STATE_G00_LINEAR_Z: %f\n", z);
+                    debugf("STATE_G00_LINEAR_Z: %f\n", z);
                     state = STATE_G00_RAPID;
                 }
                 break;
@@ -165,28 +174,28 @@ int main(int argc, char** argv) {
             case STATE_G01_LINEAR_X:
                 if (readDigits() == 1) {
                     x = atof(digits);
-                    printf("STATE_G01_LINEAR_X: %f\n", x);
+                    debugf("STATE_G01_LINEAR_X: %f\n", x);
                     state = STATE_G01_LINEAR;
                 }
                 break;
             case STATE_G01_LINEAR_Y:
                 if (readDigits() == 1) {
                     y = atof(digits);
-                    printf("STATE_G01_LINEAR_Y: %f\n", y);
+                    debugf("STATE_G01_LINEAR_Y: %f\n", y);
                     state = STATE_G01_LINEAR;
                 }
                 break;
             case STATE_G01_LINEAR_Z:
                 if (readDigits() == 1) {
                     z = atof(digits);
-                    printf("STATE_G01_LINEAR_Z: %f\n", z);
+                    debugf("STATE_G01_LINEAR_Z: %f\n", z);
                     state = STATE_G01_LINEAR;
                 }
                 break;
             case STATE_G01_LINEAR_FEED:
                 if (readDigits() == 1) {
                     feed = atof(digits);
-                    printf("STATE_G01_LINEAR_FEED: %f\n", feed);
+                    debugf("STATE_G01_LINEAR_FEED: %f\n", feed);
                     state = STATE_G01_LINEAR;
                 }
                 break;
