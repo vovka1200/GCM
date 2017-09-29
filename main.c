@@ -26,7 +26,7 @@
 #include <stdlib.h> 
 
 #define DEBUG
- 
+
 #ifdef DEBUG
 #if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__)
 #define debugf(s,d) {Serial.print(s); Serial.println(d,DEC);}
@@ -36,8 +36,8 @@
 #else
 #define debugf(...)
 #endif
- 
-int state = STATE_FRAME;
+
+int state = STATE_COMMAND_GROUP;
 char *gcode_symbol;
 char *digits;
 char *digit;
@@ -46,144 +46,94 @@ double y;
 double z;
 double feed;
 
-int readDigits() {
-    if (*gcode_symbol >= '0' && *gcode_symbol <= '9' || *gcode_symbol == '.') {
-        *digit = *gcode_symbol;
-        digit++;
-        return 0;
-    } else {
-        *digit = 0;
-        digit = digits;
-        if (*gcode_symbol == '\n') {
-            gcode_symbol--;
-        }
-        return 1;
-    }
-}
-
 /*
  * 
  */
 int main(int argc, char** argv) {
 
-    debugf("G-CODE файл: %s\n", argv[1]);
+    debugf("G-CODE файл: %s\n===\n", argv[1]);
     gcode_symbol = argv[1];
     digits = malloc(10);
     digit = digits;
+    int line_number;
+    int group_number;
     while (state != STATE_END) {
         switch (state) {
-            case STATE_FRAME:
-                switch (*gcode_symbol) {
-                    case '%':
-                        debugf("STATE_FIRST_FRAME\n");
-                        break;
-                    case '\n':
-                        state = STATE_COMMAND_GROUP;
-                        break;
-                }
+            case STATE_COMMENT:
+                debugf("STATE_COMMENT: %s\n", gcode_symbol - 1);
+                gcode_symbol = strchr(gcode_symbol, ')');
+                state = STATE_COMMAND_GROUP;
+                break;
+            case STATE_LINE_NUMBER:
+                line_number = (int) strtol(gcode_symbol, &gcode_symbol, 10);
+                debugf("STATE_LINE_NUMBER: %d\n", line_number);
+                state = STATE_COMMAND_GROUP;
                 break;
             case STATE_COMMAND_GROUP:
                 switch (*gcode_symbol) {
+                    case '(':
+                        debugf("STATE_COMMENT\n");
+                        state = STATE_COMMENT;
+                        break;
+                    case '%':
+                        debugf("STATE_FIRST_FRAME\n");
+                        break;
+                    case 'N':
+                        state = STATE_LINE_NUMBER;
+                        break;
                     case 'G':
                         state = STATE_COMMAND_GROUP_G;
                         break;
+                    case 'X':
+                        state = STATE_X;
+                        break;
+                    case 'Y':
+                        state = STATE_Y;
+                        break;
+                    case 'Z':
+                        state = STATE_Z;
+                        break;
+                    default:
+                        debugf("STATE_COMMAND_GROUP: not supported %c\n", *gcode_symbol);
+                        gcode_symbol = strchr(gcode_symbol, ' ');
+                        state = STATE_COMMAND_GROUP;
                 }
                 break;
             case STATE_COMMAND_GROUP_G:
-                if (readDigits() == 1) {
-                    int gcode_number = atoi(digits);
-                    switch (gcode_number) {
-                        case 0:
-                            state = STATE_G00_RAPID;
-                            break;
-                        case 1:
-                            state = STATE_G01_LINEAR;
-                            break;
-                    }
-                }
-                break;
-            case STATE_G00_RAPID:
-                switch (*gcode_symbol) {
-                    case 'X':
-                        state = STATE_G00_RAPID_X;
+                group_number = (int) strtol(gcode_symbol, &gcode_symbol, 10);
+                switch (group_number) {
+                    case 0:
+                        debugf("STATE_G00_RAPID\n");
+                        state = STATE_COMMAND_GROUP;
                         break;
-                    case 'Y':
-                        state = STATE_G00_RAPID_Y;
-                        break;
-                    case 'Z':
-                        state = STATE_G00_RAPID_Z;
+                    case 1:
+                        debugf("STATE_G01_LINEAR\n");
+                        state = STATE_COMMAND_GROUP;
                         break;
                     default:
+                        debugf("STATE_COMMAND_GROUP_G: not supported %d\n", group_number);
                         state = STATE_COMMAND_GROUP;
                 }
                 break;
-            case STATE_G00_RAPID_X:
-                if (readDigits() == 1) {
-                    x = atof(digits);
-                    debugf("STATE_G00_LINEAR_X: %f\n", x);
-                    state = STATE_G00_RAPID;
-                }
+            case STATE_X:
+                x = strtof(gcode_symbol, &gcode_symbol);
+                debugf("STATE_X: %f\n", x);
+                state = STATE_COMMAND_GROUP;
                 break;
-            case STATE_G00_RAPID_Y:
-                if (readDigits() == 1) {
-                    y = atof(digits);
-                    debugf("STATE_G00_LINEAR_Y: %f\n", y);
-                    state = STATE_G00_RAPID;
-                }
+            case STATE_Y:
+                y = strtof(gcode_symbol, &gcode_symbol);
+                debugf("STATE_Y: %f\n", y);
+                state = STATE_COMMAND_GROUP;
                 break;
-            case STATE_G00_RAPID_Z:
-                if (readDigits() == 1) {
-                    z = atof(digits);
-                    debugf("STATE_G00_LINEAR_Z: %f\n", z);
-                    state = STATE_G00_RAPID;
-                }
+            case STATE_Z:
+                z = strtof(gcode_symbol, &gcode_symbol);
+                debugf("STATE_Z: %f\n", z);
+                state = STATE_COMMAND_GROUP;
                 break;
-            case STATE_G01_LINEAR:
-                switch (*gcode_symbol) {
-                    case 'X':
-                        state = STATE_G01_LINEAR_X;
-                        break;
-                    case 'Y':
-                        state = STATE_G01_LINEAR_Y;
-                        break;
-                    case 'Z':
-                        state = STATE_G01_LINEAR_Z;
-                        break;
-                    case 'F':
-                        state = STATE_G01_LINEAR_FEED;
-                        break;
-                    default:
-                        state = STATE_COMMAND_GROUP;
-                }
-                break;
-
-            case STATE_G01_LINEAR_X:
-                if (readDigits() == 1) {
-                    x = atof(digits);
-                    debugf("STATE_G01_LINEAR_X: %f\n", x);
-                    state = STATE_G01_LINEAR;
-                }
-                break;
-            case STATE_G01_LINEAR_Y:
-                if (readDigits() == 1) {
-                    y = atof(digits);
-                    debugf("STATE_G01_LINEAR_Y: %f\n", y);
-                    state = STATE_G01_LINEAR;
-                }
-                break;
-            case STATE_G01_LINEAR_Z:
-                if (readDigits() == 1) {
-                    z = atof(digits);
-                    debugf("STATE_G01_LINEAR_Z: %f\n", z);
-                    state = STATE_G01_LINEAR;
-                }
-                break;
-            case STATE_G01_LINEAR_FEED:
-                if (readDigits() == 1) {
-                    feed = atof(digits);
-                    debugf("STATE_G01_LINEAR_FEED: %f\n", feed);
-                    state = STATE_G01_LINEAR;
-                }
+            case STATE_FEED:
+                feed = strtof(gcode_symbol, &gcode_symbol);
+                debugf("STATE_FEED: %f\n", feed);
+                state = STATE_COMMAND_GROUP;
                 break;
         }
         gcode_symbol++;
