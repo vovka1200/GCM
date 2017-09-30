@@ -96,7 +96,16 @@ int main(int argc, char** argv) {
                         break;
                     default:
                         debugf("STATE_COMMAND_GROUP: not supported %c\n", *gcode_symbol);
-                        gcode_symbol = strchr(gcode_symbol, ' ');
+                        char *next_command = strchr(gcode_symbol, ' ');
+                        char *next_frame = strchr(gcode_symbol, '\n');
+                        if (next_command > next_frame) {
+                            gcode_symbol = next_frame;
+                        } else if (next_command != 0) {
+                            gcode_symbol = next_command;
+                        } else {
+                            state = STATE_END;
+                            break;
+                        }
                         state = STATE_COMMAND_GROUP;
                 }
                 break;
