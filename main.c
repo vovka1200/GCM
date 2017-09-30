@@ -73,7 +73,6 @@ int main(int argc, char** argv) {
             case STATE_COMMAND_GROUP:
                 switch (*gcode_symbol) {
                     case '(':
-                        debugf("STATE_COMMENT\n");
                         state = STATE_COMMENT;
                         break;
                     case '%':
