@@ -28,7 +28,7 @@ double y;
 double z;
 double feed;
 
-void gcode_fsm(char *g_code) {
+void gcodeFSM(char *g_code) {
     int line_number;
     int group_number;
     gcode_symbol = g_code;

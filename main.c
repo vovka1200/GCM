@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
 
     debugf("G-CODE файл: %s\n===\n", argv[1]);
     state = STATE_COMMAND_GROUP;
-    gcode_fsm(argv[1]);
+    gcodeFSM(argv[1]);
 
     return (EXIT_SUCCESS);
 }

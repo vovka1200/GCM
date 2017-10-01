@@ -29,7 +29,7 @@
 extern "C" {
 #endif
 
-    void gcode_fsm(char *);
+    void gcodeFSM(char *);
 
 #ifdef __cplusplus
 }
