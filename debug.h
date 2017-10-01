@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Vladimir Yavorskiy
+ * Copyright (C) 2017 Владимир Яворский <vovka@krevedko.su>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,30 +16,33 @@
  */
 
 /* 
- * File:   main.c
- * Author: Vladimir Yavorskiy <vovka@krevedko.su>
+ * File:   debug.h
+ * Author: Владимир Яворский <vovka@krevedko.su>
  *
- * Created on 28 сентября 2017 г., 10:53
+ * Created on 1 октября 2017 г., 9:34
  */
 
-#include <stdio.h>
-#include <stdlib.h> 
-#include <string.h>
-#include "debug.h"
-#include "states.h"
-#include "fsm.h"
+#ifndef DEBUG_H
+#define DEBUG_H
 
-int state;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-/*
- * 
- */
-int main(int argc, char** argv) {
+#ifdef _DEBUG
+#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega168__)
+#define debugf(s,d) {Serial.print(s); Serial.println(d,DEC);}
+#else
+#define debugf(...) printf(__VA_ARGS__);
+#endif
+#else
+#define debugf(...)
+#endif
 
-    debugf("G-CODE файл: %s\n===\n", argv[1]);
-    state = STATE_COMMAND_GROUP;
-    gcode_fsm(argv[1]);
 
-    return (EXIT_SUCCESS);
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* DEBUG_H */
 
