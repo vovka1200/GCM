@@ -25,8 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h> 
 #include <string.h>
-#include "debug.h"
-#include "states.h"
+#include "debug.h" 
 #include "fsm.h"
 
 int state;
@@ -37,7 +36,7 @@ int state;
 int main(int argc, char** argv) {
 
     debugf("G-CODE файл: %s\n===\n", argv[1]);
-    state = STATE_COMMAND_GROUP;
+    state = FSM_STATE_COMMAND_GROUP;
     gcodeFSM(argv[1]);
 
     return (EXIT_SUCCESS);

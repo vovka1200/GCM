@@ -29,6 +29,18 @@
 extern "C" {
 #endif
 
+#define FSM_STATE_END 0
+#define FSM_STATE_COMMENT 1
+#define FSM_STATE_COMMAND_GROUP 2 
+#define FSM_STATE_COMMAND_GROUP_G 3 
+#define FSM_STATE_LINE_NUMBER 4 
+#define FSM_STATE_G00_RAPID 10
+#define FSM_STATE_G28_HOME 11
+#define FSM_STATE_X 100
+#define FSM_STATE_Y 101
+#define FSM_STATE_Z 102
+#define FSM_STATE_FEED 103
+
     void gcodeFSM(char *);
 
 #ifdef __cplusplus

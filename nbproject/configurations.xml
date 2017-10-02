@@ -12,7 +12,6 @@
                    projectFiles="true">
       <itemPath>debug.h</itemPath>
       <itemPath>fsm.h</itemPath>
-      <itemPath>states.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Файлы ресурсов"
@@ -57,8 +56,6 @@
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="states.h" ex="false" tool="3" flavor2="0">
-      </item>
     </conf>
     <conf name="Release" type="1">
       <toolsSet>
@@ -90,8 +87,6 @@
       <item path="fsm.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="states.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>
