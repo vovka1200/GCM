@@ -29,6 +29,19 @@
 extern "C" {
 #endif
 
+    typedef enum {
+        START,
+        STOP,
+        GCODE_COMMENT,
+        GCODE_LINE_NUMBER,
+        GCODE_COMMAND,
+        GCODE_COMMAND_G,
+        GCODE_X,
+        GCODE_Y,
+        GCODE_Z,
+        GCODE_FEED
+    } State;
+
     void gcodeFSM(char *);
 
 #ifdef __cplusplus

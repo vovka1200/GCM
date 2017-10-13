@@ -19,9 +19,9 @@
 #include <stdlib.h> 
 #include <string.h>
 #include "debug.h"
-#include "states.h" 
+#include "fsm.h" 
 
-extern int state;
+State state_e = START;
 char *gcode_symbol;
 double x;
 double y;
@@ -32,43 +32,46 @@ void gcodeFSM(char *g_code) {
     int line_number;
     int group_number;
     gcode_symbol = g_code;
-    while (state != STATE_END) {
-        switch (state) {
-            case STATE_COMMENT:
-                debugf("STATE_COMMENT: %s\n", gcode_symbol - 1);
+    while (state_e != STOP) {
+        switch (state_e) {
+            case START:
+                state_e = GCODE_COMMAND;
+                break;
+            case GCODE_COMMENT:
+                debugf("comment: %s\n", gcode_symbol - 1);
                 gcode_symbol = strchr(gcode_symbol, ')');
-                state = STATE_COMMAND_GROUP;
+                state_e = GCODE_COMMAND;
                 break;
-            case STATE_LINE_NUMBER:
+            case GCODE_LINE_NUMBER:
                 line_number = (int) strtol(gcode_symbol, &gcode_symbol, 10);
-                debugf("STATE_LINE_NUMBER: %d\n", line_number);
-                state = STATE_COMMAND_GROUP;
+                debugf("line number: %d\n", line_number);
+                state_e = GCODE_COMMAND;
                 break;
-            case STATE_COMMAND_GROUP:
+            case GCODE_COMMAND:
                 switch (*gcode_symbol) {
                     case '(':
-                        state = STATE_COMMENT;
+                        state_e = GCODE_COMMENT;
                         break;
                     case '%':
-                        debugf("STATE_FIRST_FRAME\n");
+                        debugf("first frame\n");
                         break;
                     case 'N':
-                        state = STATE_LINE_NUMBER;
+                        state_e = GCODE_LINE_NUMBER;
                         break;
                     case 'G':
-                        state = STATE_COMMAND_GROUP_G;
+                        state_e = GCODE_COMMAND_G;
                         break;
                     case 'X':
-                        state = STATE_X;
+                        state_e = GCODE_X;
                         break;
                     case 'Y':
-                        state = STATE_Y;
+                        state_e = GCODE_Y;
                         break;
                     case 'Z':
-                        state = STATE_Z;
+                        state_e = GCODE_Z;
                         break;
                     default:
-                        debugf("STATE_COMMAND_GROUP: not supported %c\n", *gcode_symbol);
+                        debugf("command %c not supported\n", *gcode_symbol);
                         char *next_command = strchr(gcode_symbol, ' ');
                         char *next_frame = strchr(gcode_symbol, '\n');
                         if (next_command > next_frame) {
@@ -76,52 +79,52 @@ void gcodeFSM(char *g_code) {
                         } else if (next_command != 0) {
                             gcode_symbol = next_command;
                         } else {
-                            state = STATE_END;
+                            state_e = STOP;
                             break;
                         }
-                        state = STATE_COMMAND_GROUP;
+                        state_e = GCODE_COMMAND;
                 }
                 break;
-            case STATE_COMMAND_GROUP_G:
+            case GCODE_COMMAND_G:
                 group_number = (int) strtol(gcode_symbol, &gcode_symbol, 10);
                 switch (group_number) {
                     case 0:
-                        debugf("STATE_G00_RAPID\n");
-                        state = STATE_COMMAND_GROUP;
+                        debugf("G00 rapid\n");
+                        state_e = GCODE_COMMAND;
                         break;
                     case 1:
-                        debugf("STATE_G01_LINEAR\n");
-                        state = STATE_COMMAND_GROUP;
+                        debugf("G01 linier\n");
+                        state_e = GCODE_COMMAND;
                         break;
                     default:
-                        debugf("STATE_COMMAND_GROUP_G: not supported %d\n", group_number);
-                        state = STATE_COMMAND_GROUP;
+                        debugf("command G%d not supported\n", group_number);
+                        state_e = GCODE_COMMAND;
                 }
                 break;
-            case STATE_X:
+            case GCODE_X:
                 x = strtof(gcode_symbol, &gcode_symbol);
-                debugf("STATE_X: %f\n", x);
-                state = STATE_COMMAND_GROUP;
+                debugf("X: %f\n", x);
+                state_e = GCODE_COMMAND;
                 break;
-            case STATE_Y:
+            case GCODE_Y:
                 y = strtof(gcode_symbol, &gcode_symbol);
-                debugf("STATE_Y: %f\n", y);
-                state = STATE_COMMAND_GROUP;
+                debugf("Y: %f\n", y);
+                state_e = GCODE_COMMAND;
                 break;
-            case STATE_Z:
+            case GCODE_Z:
                 z = strtof(gcode_symbol, &gcode_symbol);
-                debugf("STATE_Z: %f\n", z);
-                state = STATE_COMMAND_GROUP;
+                debugf("Z: %f\n", z);
+                state_e = GCODE_COMMAND;
                 break;
-            case STATE_FEED:
+            case GCODE_FEED:
                 feed = strtof(gcode_symbol, &gcode_symbol);
-                debugf("STATE_FEED: %f\n", feed);
-                state = STATE_COMMAND_GROUP;
+                debugf("FEED: %f\n", feed);
+                state_e = GCODE_COMMAND;
                 break;
         }
         gcode_symbol++;
         if (*gcode_symbol == 0) {
-            state = STATE_END;
+            state_e = STOP;
         }
     }
 }
